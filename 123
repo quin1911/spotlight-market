@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拾光市集 - AI 智慧二手拍賣</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        body {
+            background: radial-gradient(circle at 20% 20%, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
+                        linear-gradient(135deg, #181513 0%, #110e0d 50%, #0d0b0a 100%);
+            background-attachment: fixed;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* 頂部導覽列 (市集主畫面顯示) */
+        .navbar {
+            width: 100%;
+            padding: 16px 40px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(20, 17, 15, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(249, 115, 22, 0.12);
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        .navbar.active-nav {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            color: #ffedd5;
+            font-size: 19px;
+            font-family: "Playfair Display", "Georgia", serif;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+        }
+        .logo-icon {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            padding: 6px 10px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+        }
+        .nav-btns {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .nav-btns button {
+            background: transparent;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: #cbd5e1;
+            padding: 7px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .nav-btns button.active, .nav-btns button:hover {
+            background: #f97316;
+            color: #fff;
+            border-color: #f97316;
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+        }
+
+        /* 頁面容器特效 */
+        .page-container {
+            flex: 1;
+            display: none;
+            width: 100%;
+            opacity: 0;
+            transform: scale(0.98);
+        }
+        .page-container.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* 0. 歡迎首頁與登入介面 (雙欄互動容器) */
+        #page-welcome-auth {
+            display: none;
+            width: 100%;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        #page-welcome-auth.active {
+            display: flex;
+        }
+
+        /* 左側品牌首頁區 */
+        .split-left {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 80px 10%;
+            background: radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.15) 0%, transparent 50%),
+                        linear-gradient(135deg, #161210 0%, #0d0a09 100%);
+            cursor: pointer;
+            transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            position: absolute;
+            left: 0; top: 0;
+        }
+        #page-welcome-auth.auth-open .split-left {
+            width: 50%;
+        }
+
+        .welcome-content {
+            max-width: 500px;
+        }
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ea580c;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            font-family: "Playfair Display", "Georgia", serif;
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4);
+        }
+        .welcome-title {
+            font-family: "Playfair Display", "Georgia", serif;
+            font-size: 44px;
+            color: #f8fafc;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .welcome-desc {
+            color: #94a3b8;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+        .welcome-features {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .feature-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: #fed7aa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 右側半透明玻璃特效滑入登入/註冊介面 */
+        .split-right {
+            position: absolute;
+            right: -50%;
+            top: 0;
+            width: 50%;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(26, 22, 20, 0.85) 0%, rgba(18, 14, 12, 0.92) 100%);
+            backdrop-filter: blur(16px);
+            border-left: 1px solid rgba(249, 115, 22, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            transition: right 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: -15px 0 40px rgba(0,0,0,0.6);
+            z-index: 10;
+        }
+        #page-welcome-auth.auth-open .split-right {
+            right: 0;
+        }
+
+        .auth-card {
+            background: rgba(24, 20, 18, 0.85);
+            backdrop-filter: blur(10px);
+            width: 420px;
+            max-width: 100%;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            position: relative;
+        }
+        .auth-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .auth-back-home {
+            background: none;
+            border: none;
+            color: #f97316;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .auth-back-home:hover {
+            color: #fb923c;
+        }
+        .auth-lang {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #cbd5e1;
+        }
+        .auth-title {
+            font-family: "Playfair Display", "Georgia", serif;
+            font-size: 26px;
+            color: #ffedd5;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .auth-subtitle {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .google-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 11px;
+            border-radius: 8px;
+            font-weight: 500;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 18px;
+        }
+        .google-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(249, 115, 22, 0.4);
+        }
+        .divider {
+            text-align: center;
+            position: relative;
+            margin-bottom: 18px;
+        }
+        .divider::before {
+            content: "";
+            position: absolute;
+            top: 50%; left: 0; width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .divider span {
+            background: #1b1614;
+            padding: 0 10px;
+            position: relative;
+            color: #94a3b8;
+            font-size: 11px;
+        }
+        .auth-form-group {
+            margin-bottom: 14px;
+        }
+        .auth-form-group label {
+            display: block;
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-bottom: 5px;
+        }
+        .auth-form-group input {
+            width: 100%;
+            padding: 9px 12px;
+            background: rgba(18, 14, 12, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 13px;
+            color: #fff;
+            outline: none;
+        }
+        .auth-form-group input:focus {
+            border-color: #f97316;
+            box-shadow: 0 0 8px rgba(249, 115, 22, 0.3);
+        }
+        .submit-auth-btn {
+            width: 100%;
+            background: #ea580c;
+            color: white;
+            border: none;
+            padding: 11px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+        }
+        .submit-auth-btn:hover {
+            background: #f97316;
+            box-shadow: 0 6px 18px rgba(249, 115, 22, 0.5);
+        }
+        .auth-footer-text {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 12px;
+        }
+        .auth-footer-text a {
+            color: #f97316;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 市集內頁通用外框 */
+        .main-content-wrapper {
+            max-width: 950px;
+            margin: 95px auto 40px auto;
+            background: rgba(26, 22, 20, 0.8);
+            backdrop-filter: blur(16px);
+            padding: 35px;
+            border-radius: 20px;
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            width: 100%;
+        }
+        h2.section-title {
+            font-family: "Playfair Display", "Georgia", serif;
+            color: #ffedd5;
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 26px;
+        }
+
+        /* 搜尋與過濾列 */
+        .filter-search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .search-input-box {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+        .search-input-box input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            background: rgba(20, 17, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+        }
+        .search-input-box span {
+            position: absolute;
+            left: 12px;
+            top: 11px;
+            color: #78716c;
+        }
+        .category-chips {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .chip {
+            background: rgba(20, 17, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .chip.active, .chip:hover {
+            background: #f97316;
+            color: white;
+            border-color: #f97316;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
+
+        /* 商品九宮格與卡片 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+        }
+        .product-card {
+            background: rgba(20, 16, 14, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(249, 115, 22, 0.4);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .product-thumb {
+            width: 100%;
+            height: 140px;
+            background: #241d1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #78716c;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .wishlist-btn:hover {
+            transform: scale(1.2);
+        }
+        .product-info {
+            padding: 14px;
+        }
+        .product-title {
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #f1f5f9;
+            cursor: pointer;
+        }
+        .product-title:hover {
+            color: #f97316;
+        }
+        .product-price {
+            color: #f97316;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        /* 聊聊互動視窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+        .modal-card {
+            background: #1b1614;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            width: 500px;
+            max-width: 90%;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+        }
+        .chat-box {
+            background: #120f0e;
+            border: 1px solid rgba(255,255,255,0.06);
+            height: 200px;
+            border-radius: 8px;
+            padding: 12px;
+            overflow-y: auto;
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .chat-msg {
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        .chat-msg.buyer {
+            background: rgba(249, 115, 22, 0.2);
+            color: #fed7aa;
+            align-self: flex-end;
+        }
+        .chat-msg.seller {
+            background: #26201c;
+            color: #cbd5e1;
+            align-self: flex-start;
+        }
+
+        /* AI 上架表單區 */
+        .form-group-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 16px;
+        }
+        .form-group-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(20, 17, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            height: 90px;
+            resize: vertical;
+        }
+        .upload-box {
+            border: 2px dashed rgba(249, 115, 22, 0.3);
+            padding: 25px;
+            text-align: center;
+            border-radius: 10px;
+            background: rgba(249, 115, 22, 0.02);
+            cursor: pointer;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+        .upload-box:hover {
+            border-color: #f97316;
+            background: rgba(249, 115, 22, 0.06);
+        }
+        .action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35);
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部導覽列 -->
+    <div id="main-navbar" class="navbar">
+        <div class="brand-logo" onclick="switchPage('welcome')">
+            <div class="logo-icon">🏷️</div>
+            <span>拾光市集</span>
+        </div>
+        <div class="nav-btns">
+            <button id="btn-home" class="active" onclick="switchPage('home')">瀏覽好物</button>
+            <button id="btn-wishlist" onclick="switchPage('wishlist')">❤️ 收藏夾 (<span id="wish-count">0</span>)</button>
+            <button id="btn-upload" onclick="switchPage('upload')">✨ AI 上架</button>
+            <button id="btn-profile" onclick="switchPage('profile')">👤 個人中心</button>
+        </div>
+    </div>
+
+    <!-- 0. 歡迎首頁與半透明玻璃登入介面 (支援右側滑入動態各半) -->
+    <div id="page-welcome-auth" class="page-container active">
+        <!-- 左側品牌首頁區 (點擊任意處開啟登入介面) -->
+        <div class="split-left" onclick="openAuthPanel(event)">
+            <div class="welcome-content">
+                <div class="welcome-badge">
+                    <span>🏷️</span> 拾光市集
+                </div>
+                <h1 class="welcome-title">讓好物，遇見下一個主人。</h1>
+                <p class="welcome-desc">把用不到的刊登出來，把找了很久的帶回家——就在你身邊。<br><span style="font-size: 13px; color: #f97316; margin-top: 10px; display: inline-block;">(點擊任意處開始體驗 ➔)</span></p>
+                <div class="welcome-features">
+                    <div class="feature-tag">✓ 免費刊登</div>
+                    <div class="feature-tag">✓ 面交或寄送</div>
+                    <div class="feature-tag">✓ 安心交易</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右側半透明玻璃滑入登入/註冊介面 -->
+        <div class="split-right" id="split-right-panel">
+            <div class="auth-card">
+                <div class="auth-top-bar">
+                    <button class="auth-back-home" onclick="closeAuthPanel()">✕ 關閉</button>
+                    <div class="auth-lang">繁體中文</div>
+                </div>
+                <h2 class="auth-title">建立你的帳號</h2>
+                <p class="auth-subtitle">一分鐘完成設定，馬上開始刊登你的好物。</p>
+                
+                <button class="google-btn" onclick="completeLogin()">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.19v3.15C3.17 21.36 7.25 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.19C.43 8.1 0 9.8 0 12s.43 3.9 1.19 5.42l4.09-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.25 0 3.17 2.64 1.19 6.58l4.09 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+                    使用 Google 繼續
+                </button>
+
+                <div class="divider"><span>或使用 EMAIL 繼續</span></div>
+
+                <div class="auth-form-group">
+                    <label>顯示名稱</label>
+                    <input type="text" id="reg-name" placeholder="其他人看到的名稱" value="Walker">
+                </div>
+                <div class="auth-form-group">
+                    <label>電子郵件</label>
+                    <input type="email" placeholder="you@example.com" value="walker@example.com">
+                </div>
+                <div class="auth-form-group">
+                    <label>密碼</label>
+                    <input type="password" placeholder="至少 8 個字元" value="********">
+                </div>
+
+                <button class="submit-auth-btn" onclick="completeLogin()">建立帳號</button>
+                <div class="auth-footer-text">已經有帳號了？ <a onclick="completeLogin()">登入</a></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. 瀏覽好物首頁 -->
+    <div id="page-home" class="page-container">
+        <div class="main-content-wrapper">
+            <h2 class="section-title">🔥 探索熱門二手好物</h2>
+            
+            <div class="filter-search-bar">
+                <div class="search-input-box">
+                    <span>🔍</span>
+                    <input type="text" id="search-input" placeholder="搜尋商品名稱..." oninput="filterProducts()">
+                </div>
+                <div class="category-chips">
+                    <div class="chip active" onclick="setCategory('all', this)">全部</div>
+                    <div class="chip" onclick="setCategory('3c', this)">3C 科技</div>
+                    <div class="chip" onclick="setCategory('clothing', this)">流行服飾</div>
+                    <div class="chip" onclick="setCategory('book', this)">書籍雜誌</div>
+                    <div class="chip" onclick="setCategory('anime', this)">動漫周邊</div>
+                </div>
+            </div>
+
+            <div class="product-grid" id="product-grid"></div>
+        </div>
+    </div>
+
+    <!-- 2. 我的收藏與追蹤清單 -->
+    <div id="page-wishlist" class="page-container">
+        <div class="main-content-wrapper">
+            <h2 class="section-title">❤️ 我的收藏清單</h2>
+            <div class="product-grid" id="wishlist-grid"></div>
+        </div>
+    </div>
+
+    <!-- 3. AI 智慧上架頁面 -->
+    <div id="page-upload" class="page-container">
+        <div class="main-content-wrapper">
+            <h2 class="section-title">✨ AI 智慧商品上架</h2>
+            <div class="form-group">
+                <label>1. 上傳商品照片</label>
+                <div class="upload-box" onclick="fakeAIAnalyze()">📷 點此上傳商品照片 (點擊即可自動觸發 AI 辨識)</div>
+            </div>
+            <div class="form-group"><label>商品標題</label><input type="text" id="up-title" placeholder="AI 自動填寫..."></div>
+            <div class="form-group-row">
+                <div class="form-group">
+                    <label>分類</label>
+                    <select id="up-category">
+                        <option value="3c">3C 科技</option>
+                        <option value="clothing">流行服飾</option>
+                        <option value="book">書籍雜誌</option>
+                        <option value="anime">動漫周邊</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>售價 (NT$)</label><input type="text" id="up-price" placeholder="AI 智慧估價..."></div>
+            </div>
+            <div class="form-group"><label>商品描述</label><textarea id="up-desc" placeholder="AI 產生介紹..."></textarea></div>
+            <button class="action-btn" onclick="submitNewProduct()">確認刊登商品</button>
+        </div>
+    </div>
+
+    <!-- 4. 個人中心與歷史刊登 -->
+    <div id="page-profile" class="page-container">
+        <div class="main-content-wrapper">
+            <h2 class="section-title">👤 個人中心與歷史刊登</h2>
+            <div style="background: rgba(20,17,15,0.7); padding: 20px; border-radius: 12px; margin-bottom: 25px; display: flex; align-items: center; gap: 20px;">
+                <div style="font-size: 40px; background: #f97316; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">🌟</div>
+                <div>
+                    <h3 id="profile-name-display" style="color: #ffedd5; margin-bottom: 4px;">Walker</h3>
+                    <p style="color: #94a3b8; font-size: 13px;">賣家評價：5.0分 (12則良好評價) · 已實名認證</p>
+                </div>
+            </div>
+            <h3 style="font-size: 16px; color: #cbd5e1; margin-bottom: 15px;">📦 我上架的商品紀錄</h3>
+            <div class="product-grid" id="my-products-grid"></div>
+        </div>
+    </div>
+
+    <!-- 即時聊聊互動視窗 -->
+    <div id="chat-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="chat-item-title" style="color: #ffedd5; font-size: 16px;">與賣家聊聊</h3>
+                <button onclick="closeChat()" style="background: none; border: none; color: #aaa; cursor: pointer; font-size: 16px;">✕</button>
+            </div>
+            <div class="chat-box" id="chat-messages">
+                <div class="chat-msg seller">您好！請問這件商品還在嗎？支援雙北面交嗎？</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="chat-input" placeholder="輸入訊息回覆..." style="flex:1; padding: 10px; background: #120f0e; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 13px;">
+                <button onclick="sendChatMessage()" style="background: #f97316; color: white; border: none; padding: 0 16px; border-radius: 8px; cursor: pointer; font-weight: bold;">發送</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let products = [
+            { id: 1, title: "九成新機械鍵盤 (茶軸)", price: 1200, category: "3c", desc: "極少使用，敲擊感佳。", thumb: "⌨️ 鍵盤" },
+            { id: 2, title: "Sony 無線降噪耳機", price: 3500, category: "3c", desc: "降噪效果極佳，配件齊全。", thumb: "🎧 耳機" },
+            { id: 3, title: "經典動漫限量收藏公仔", price: 680, category: "anime", desc: "盒裝完整，僅拆擺。", thumb: "🤖 公仔" },
+            { id: 4, title: "文青風棉麻寬褲 (M號)", price: 350, category: "clothing", desc: "質感極佳，穿過兩次。", thumb: "👖 服飾" }
+        ];
+        let wishlist = [];
+        let myProducts = [
+            { id: 101, title: "精選個人二手原文書", price: 450, category: "book", desc: "無畫線註記。", thumb: "📚 書籍" }
+        ];
+        let currentFilterCategory = 'all';
+
+        window.onload = function() {
+            renderProducts();
+            renderMyProducts();
+        };
+
+        function switchPage(page) {
+            document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btns button').forEach(b => b.classList.remove('active'));
+            
+            const navbar = document.getElementById('main-navbar');
+
+            if (page === 'welcome') {
+                document.getElementById('page-welcome-auth').classList.add('active');
+                closeAuthPanel();
+                navbar.classList.remove('active-nav');
+            } else if (page === 'home') {
+                document.getElementById('page-home').classList.add('active');
+                document.getElementById('btn-home').classList.add('active');
+                navbar.classList.add('active-nav');
+                renderProducts();
+            } else if (page === 'wishlist') {
+                document.getElementById('page-wishlist').classList.add('active');
+                document.getElementById('btn-wishlist').classList.add('active');
+                navbar.classList.add('active-nav');
+                renderWishlist();
+            } else if (page === 'upload') {
+                document.getElementById('page-upload').classList.add('active');
+                document.getElementById('btn-upload').classList.add('active');
+                navbar.classList.add('active-nav');
+            } else if (page === 'profile') {
+                document.getElementById('page-profile').classList.add('active');
+                document.getElementById('btn-profile').classList.add('active');
+                navbar.classList.add('active-nav');
+                renderMyProducts();
+            }
+        }
+
+        function openAuthPanel(event) {
+            event.stopPropagation();
+            document.getElementById('page-welcome-auth').classList.add('auth-open');
+        }
+
+        function closeAuthPanel() {
+            document.getElementById('page-welcome-auth').classList.remove('auth-open');
+        }
+
+        function completeLogin() {
+            const nameInput = document.getElementById('reg-name');
+            if (nameInput && nameInput.value.trim() !== '') {
+                const updatedName = nameInput.value.trim();
+                document.getElementById('profile-name-display').innerText = updatedName;
+            }
+            switchPage('home');
+        }
+
+        function renderProducts() {
+            const keyword = document.getElementById('search-input').value.toLowerCase();
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            const filtered = products.filter(p => {
+                const matchCat = currentFilterCategory === 'all' || p.category === currentFilterCategory;
+                const matchKey = p.title.toLowerCase().includes(keyword) || p.desc.toLowerCase().includes(keyword);
+                return matchCat && matchKey;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p style="color: #78716c; grid-column: 1/-1; text-align: center; padding: 30px;">沒有找到相關二手好物。</p>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const isWish = wishlist.some(w => w.id === p.id);
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <button class="wishlist-btn" onclick="toggleWishlist(${p.id})">${isWish ? '❤️' : '🤍'}</button>
+                        <div class="product-thumb" onclick="openChat('${p.title}')">${p.thumb}</div>
+                        <div class="product-info">
+                            <div class="product-title" onclick="openChat('${p.title}')">${p.title}</div>
+                            <div class="product-price">NT$ ${p.price}</div>
+                            <button onclick="openChat('${p.title}')" style="width:100%; margin-top:10px; background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.3); color:#fed7aac9; padding:6px; border-radius:6px; cursor:pointer; font-size:12px;">💬 聊聊問細節</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function setCategory(cat, el) {
+            currentFilterCategory = cat;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderProducts();
+        }
+        function filterProducts() {
+            renderProducts();
+        }
+
+        function toggleWishlist(id) {
+            const item = products.find(p => p.id === id);
+            const index = wishlist.findIndex(w => w.id === id);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+            } else {
+                wishlist.push(item);
+            }
+            document.getElementById('wish-count').innerText = wishlist.length;
+            renderProducts();
+            if (document.getElementById('page-wishlist').classList.contains('active')) {
+                renderWishlist();
+            }
+        }
+
+        function renderWishlist() {
+            const grid = document.getElementById('wishlist-grid');
+            grid.innerHTML = '';
+            if (wishlist.length === 0) {
+                grid.innerHTML = `<p style="color: #78716c; grid-column: 1/-1; text-align: center; padding: 30px;">目前沒有收藏任何商品。</p>`;
+                return;
+            }
+            wishlist.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <button class="wishlist-btn" onclick="toggleWishlist(${p.id})">❤️</button>
+                        <div class="product-thumb" onclick="openChat('${p.title}')">${p.thumb}</div>
+                        <div class="product-info">
+                            <div class="product-title" onclick="openChat('${p.title}')">${p.title}</div>
+                            <div class="product-price">NT$ ${p.price}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function fakeAIAnalyze() {
+            document.getElementById('up-title').value = "全新特製手作木質香氛燈";
+            document.getElementById('up-category').value = "anime";
+            document.getElementById('up-price').value = "850";
+            document.getElementById('up-desc').value = "【AI自動生成】質感溫潤，附贈精油，送禮自用兩相宜。";
+            alert("✨ AI 照片辨識成功！欄位已自動填入。");
+        }
+
+        function submitNewProduct() {
+            const title = document.getElementById('up-title').value || "未命名商品";
+            const price = document.getElementById('up-price').value || "100";
+            const category = document.getElementById('up-category').value;
+            const desc = document.getElementById('up-desc').value;
+
+            const newObj = { id: Date.now(), title, price: Number(price), category, desc, thumb: "📦 新上架" };
+            products.unshift(newObj);
+            myProducts.unshift(newObj);
+            alert("🎉 商品已成功透過 AI 上架至拾光市集！");
+            switchPage('home');
+        }
+
+        function renderMyProducts() {
+            const grid = document.getElementById('my-products-grid');
+            grid.innerHTML = '';
+            myProducts.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <div class="product-thumb">${p.thumb}</div>
+                        <div class="product-info">
+                            <div class="product-title">${p.title}</div>
+                            <div class="product-price">NT$ ${p.price} <span style="font-size:11px; color:#10b981; float:right;">(上架中)</span></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openChat(title) {
+            document.getElementById('chat-item-title').innerText = `💬 洽詢：${title}`;
+            document.getElementById('chat-modal').style.display = 'flex';
+        }
+        function closeChat() {
+            document.getElementById('chat-modal').style.display = 'none';
+        }
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msgText = input.value.trim();
+            if (!msgText) return;
+
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.innerHTML += `<div class="chat-msg buyer">${msgText}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            setTimeout(() => {
+                chatBox.innerHTML += `<div class="chat-msg seller">賣家已收到您的訊息，會盡快回覆您喔！</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 800);
+        }
+    </script>
+</body>
+</html>
