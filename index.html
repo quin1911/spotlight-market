@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>拾光市集 - AI 智慧二手拍賣</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f97316">
     <style>
         * {
             box-sizing: border-box;
@@ -23,7 +25,7 @@
             overflow-x: hidden;
         }
 
-        /* 頂部導覽列 (市集主畫面顯示) */
+        /* 頂部導覽列 */
         .navbar {
             width: 100%;
             padding: 16px 40px;
@@ -51,7 +53,7 @@
             font-weight: 600;
             color: #ffedd5;
             font-size: 19px;
-            font-family: "Playfair Display", "Georgia", serif;
+            font-family: "Georgia", serif;
             letter-spacing: 0.5px;
             cursor: pointer;
         }
@@ -99,7 +101,7 @@
             transform: scale(1);
         }
 
-        /* 0. 歡迎首頁與登入介面 (雙欄互動容器) */
+        /* 0. 歡迎首頁與登入介面 */
         #page-welcome-auth {
             display: none;
             width: 100%;
@@ -111,7 +113,6 @@
             display: flex;
         }
 
-        /* 左側品牌首頁區 */
         .split-left {
             width: 100%;
             height: 100vh;
@@ -143,11 +144,11 @@
             border-radius: 8px;
             font-weight: 500;
             margin-bottom: 24px;
-            font-family: "Playfair Display", "Georgia", serif;
+            font-family: "Georgia", serif;
             box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4);
         }
         .welcome-title {
-            font-family: "Playfair Display", "Georgia", serif;
+            font-family: "Georgia", serif;
             font-size: 44px;
             color: #f8fafc;
             line-height: 1.2;
@@ -172,12 +173,8 @@
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        /* 右側半透明玻璃特效滑入登入/註冊介面 */
         .split-right {
             position: absolute;
             right: -50%;
@@ -208,7 +205,6 @@
             border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(249, 115, 22, 0.25);
-            position: relative;
         }
         .auth-top-bar {
             display: flex;
@@ -224,19 +220,8 @@
             cursor: pointer;
             font-weight: 500;
         }
-        .auth-back-home:hover {
-            color: #fb923c;
-        }
-        .auth-lang {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            color: #cbd5e1;
-        }
         .auth-title {
-            font-family: "Playfair Display", "Georgia", serif;
+            font-family: "Georgia", serif;
             font-size: 26px;
             color: #ffedd5;
             margin-bottom: 6px;
@@ -304,10 +289,6 @@
             color: #fff;
             outline: none;
         }
-        .auth-form-group input:focus {
-            border-color: #f97316;
-            box-shadow: 0 0 8px rgba(249, 115, 22, 0.3);
-        }
         .submit-auth-btn {
             width: 100%;
             background: #ea580c;
@@ -323,18 +304,6 @@
         }
         .submit-auth-btn:hover {
             background: #f97316;
-            box-shadow: 0 6px 18px rgba(249, 115, 22, 0.5);
-        }
-        .auth-footer-text {
-            text-align: center;
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 12px;
-        }
-        .auth-footer-text a {
-            color: #f97316;
-            text-decoration: none;
-            cursor: pointer;
         }
 
         /* 市集內頁通用外框 */
@@ -350,7 +319,7 @@
             width: 100%;
         }
         h2.section-title {
-            font-family: "Playfair Display", "Georgia", serif;
+            font-family: "Georgia", serif;
             color: #ffedd5;
             margin-bottom: 20px;
             font-weight: 500;
@@ -432,9 +401,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #78716c;
-            font-size: 14px;
+            color: #cbd5e1;
+            font-size: 16px;
             cursor: pointer;
+            font-weight: 500;
         }
         .wishlist-btn {
             position: absolute;
@@ -450,9 +420,7 @@
             justify-content: center;
             cursor: pointer;
             font-size: 16px;
-        }
-        .wishlist-btn:hover {
-            transform: scale(1.2);
+            z-index: 5;
         }
         .product-info {
             padding: 14px;
@@ -462,6 +430,7 @@
             margin-bottom: 6px;
             color: #f1f5f9;
             cursor: pointer;
+            font-weight: 500;
         }
         .product-title:hover {
             color: #f97316;
@@ -472,12 +441,12 @@
             font-size: 15px;
         }
 
-        /* 聊聊互動視窗 */
+        /* 彈窗通用樣式 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -486,16 +455,20 @@
         .modal-card {
             background: #1b1614;
             border: 1px solid rgba(249, 115, 22, 0.3);
-            width: 500px;
-            max-width: 90%;
+            width: 520px;
+            max-width: 92%;
             border-radius: 16px;
             padding: 25px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            max-height: 90vh;
+            overflow-y: auto;
         }
+
+        /* 聊聊互動窗 */
         .chat-box {
             background: #120f0e;
             border: 1px solid rgba(255,255,255,0.06);
-            height: 200px;
+            height: 180px;
             border-radius: 8px;
             padding: 12px;
             overflow-y: auto;
@@ -602,9 +575,8 @@
         </div>
     </div>
 
-    <!-- 0. 歡迎首頁與半透明玻璃登入介面 (支援右側滑入動態各半) -->
+    <!-- 0. 歡迎首頁與半透明玻璃登入介面 -->
     <div id="page-welcome-auth" class="page-container active">
-        <!-- 左側品牌首頁區 (點擊任意處開啟登入介面) -->
         <div class="split-left" onclick="openAuthPanel(event)">
             <div class="welcome-content">
                 <div class="welcome-badge">
@@ -620,12 +592,11 @@
             </div>
         </div>
 
-        <!-- 右側半透明玻璃滑入登入/註冊介面 -->
         <div class="split-right" id="split-right-panel">
             <div class="auth-card">
                 <div class="auth-top-bar">
                     <button class="auth-back-home" onclick="closeAuthPanel()">✕ 關閉</button>
-                    <div class="auth-lang">繁體中文</div>
+                    <div style="font-size: 11px; color: #94a3b8;">繁體中文</div>
                 </div>
                 <h2 class="auth-title">建立你的帳號</h2>
                 <p class="auth-subtitle">一分鐘完成設定，馬上開始刊登你的好物。</p>
@@ -639,19 +610,18 @@
 
                 <div class="auth-form-group">
                     <label>顯示名稱</label>
-                    <input type="text" id="reg-name" placeholder="其他人看到的名稱" value="Walker">
+                    <input type="text" id="reg-name" value="Walker">
                 </div>
                 <div class="auth-form-group">
                     <label>電子郵件</label>
-                    <input type="email" placeholder="you@example.com" value="walker@example.com">
+                    <input type="email" value="walker@example.com">
                 </div>
                 <div class="auth-form-group">
                     <label>密碼</label>
-                    <input type="password" placeholder="至少 8 個字元" value="********">
+                    <input type="password" value="********">
                 </div>
 
-                <button class="submit-auth-btn" onclick="completeLogin()">建立帳號</button>
-                <div class="auth-footer-text">已經有帳號了？ <a onclick="completeLogin()">登入</a></div>
+                <button class="submit-auth-btn" onclick="completeLogin()">進入市集</button>
             </div>
         </div>
     </div>
@@ -679,7 +649,7 @@
         </div>
     </div>
 
-    <!-- 2. 我的收藏與追蹤清單 -->
+    <!-- 2. 我的收藏夾 -->
     <div id="page-wishlist" class="page-container">
         <div class="main-content-wrapper">
             <h2 class="section-title">❤️ 我的收藏清單</h2>
@@ -687,7 +657,7 @@
         </div>
     </div>
 
-    <!-- 3. AI 智慧上架頁面 -->
+    <!-- 3. AI 上架頁面 -->
     <div id="page-upload" class="page-container">
         <div class="main-content-wrapper">
             <h2 class="section-title">✨ AI 智慧商品上架</h2>
@@ -713,12 +683,12 @@
         </div>
     </div>
 
-    <!-- 4. 個人中心與歷史刊登 -->
+    <!-- 4. 個人中心 -->
     <div id="page-profile" class="page-container">
         <div class="main-content-wrapper">
             <h2 class="section-title">👤 個人中心與歷史刊登</h2>
             <div style="background: rgba(20,17,15,0.7); padding: 20px; border-radius: 12px; margin-bottom: 25px; display: flex; align-items: center; gap: 20px;">
-                <div style="font-size: 40px; background: #f97316; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">🌟</div>
+                <div style="font-size: 32px; background: #f97316; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">🌟</div>
                 <div>
                     <h3 id="profile-name-display" style="color: #ffedd5; margin-bottom: 4px;">Walker</h3>
                     <p style="color: #94a3b8; font-size: 13px;">賣家評價：5.0分 (12則良好評價) · 已實名認證</p>
@@ -729,10 +699,27 @@
         </div>
     </div>
 
+    <!-- 商品詳細資訊彈窗 -->
+    <div id="detail-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 id="det-title" style="color: #ffedd5; font-size: 18px;">商品詳情</h3>
+                <button onclick="closeDetail()" style="background:none; border:none; color:#aaa; cursor:pointer; font-size:18px;">✕</button>
+            </div>
+            <div id="det-thumb" style="width:100%; height:180px; background:#241d1a; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:15px;">📦</div>
+            <div id="det-price" style="color:#f97316; font-size:20px; font-weight:bold; margin-bottom:10px;">NT$ 0</div>
+            <p id="det-desc" style="color:#cbd5e1; font-size:14px; line-height:1.6; margin-bottom:20px; background:rgba(0,0,0,0.2); padding:12px; border-radius:8px;"></p>
+            <div style="display:flex; gap:10px;">
+                <button onclick="openChatFromDetail()" style="flex:1; background:rgba(249,115,22,0.15); border:1px solid #f97316; color:#fed7aa; padding:11px; border-radius:8px; cursor:pointer; font-weight:bold;">💬 聊聊問細節</button>
+                <button onclick="openCheckout()" style="flex:1; background:#f97316; border:none; color:white; padding:11px; border-radius:8px; cursor:pointer; font-weight:bold;">⚡ 直接購買</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 即時聊聊互動視窗 -->
     <div id="chat-modal" class="modal-overlay">
         <div class="modal-card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <h3 id="chat-item-title" style="color: #ffedd5; font-size: 16px;">與賣家聊聊</h3>
                 <button onclick="closeChat()" style="background: none; border: none; color: #aaa; cursor: pointer; font-size: 16px;">✕</button>
             </div>
@@ -746,18 +733,34 @@
         </div>
     </div>
 
+    <!-- 結帳確認彈窗 -->
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-card" style="text-align: center; padding: 30px;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🎉</div>
+            <h3 style="color: #ffedd5; font-size: 20px; margin-bottom: 10px;">確認結帳</h3>
+            <p id="checkout-item-name" style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;"></p>
+            <div style="background: rgba(20,17,15,0.8); padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px; font-size: 13px; color: #cbd5e1;">
+                <p>📍 取貨方式：7-11 店到店 / 雙北捷運面交</p>
+                <p style="margin-top: 5px;">💳 付款方式：線上信用卡 / 取貨付款</p>
+            </div>
+            <button class="action-btn" onclick="finishCheckout()">確認送出訂單</button>
+            <button onclick="closeCheckout()" style="background: none; border: none; color: #94a3b8; margin-top: 12px; cursor: pointer; font-size: 13px;">取消</button>
+        </div>
+    </div>
+
     <script>
         let products = [
-            { id: 1, title: "九成新機械鍵盤 (茶軸)", price: 1200, category: "3c", desc: "極少使用，敲擊感佳。", thumb: "⌨️ 鍵盤" },
-            { id: 2, title: "Sony 無線降噪耳機", price: 3500, category: "3c", desc: "降噪效果極佳，配件齊全。", thumb: "🎧 耳機" },
-            { id: 3, title: "經典動漫限量收藏公仔", price: 680, category: "anime", desc: "盒裝完整，僅拆擺。", thumb: "🤖 公仔" },
-            { id: 4, title: "文青風棉麻寬褲 (M號)", price: 350, category: "clothing", desc: "質感極佳，穿過兩次。", thumb: "👖 服飾" }
+            { id: 1, title: "九成新機械鍵盤 (茶軸)", price: 1200, category: "3c", desc: "極少使用，敲擊感佳， RGB 背光正常，原廠盒裝齊全。", thumb: "⌨️ 鍵盤" },
+            { id: 2, title: "Sony 無線降噪耳機", price: 3500, category: "3c", desc: "降噪效果極佳，耳罩無破損，配件與充電線齊全。", thumb: "🎧 耳機" },
+            { id: 3, title: "經典動漫限量收藏公仔", price: 680, category: "anime", desc: "日版金證，盒裝完整，僅拆擺於防塵櫃中。", thumb: "🤖 公仔" },
+            { id: 4, title: "文青風棉麻寬褲 (M號)", price: 350, category: "clothing", desc: "日系質感棉麻材質，版型好看，穿過兩次已洗淨。", thumb: "👖 服飾" }
         ];
         let wishlist = [];
         let myProducts = [
-            { id: 101, title: "精選個人二手原文書", price: 450, category: "book", desc: "無畫線註記。", thumb: "📚 書籍" }
+            { id: 101, title: "精選個人二手原文書", price: 450, category: "book", desc: "無畫線註記，九成新。", thumb: "📚 書籍" }
         ];
         let currentFilterCategory = 'all';
+        let currentActiveProduct = null;
 
         window.onload = function() {
             renderProducts();
@@ -808,8 +811,7 @@
         function completeLogin() {
             const nameInput = document.getElementById('reg-name');
             if (nameInput && nameInput.value.trim() !== '') {
-                const updatedName = nameInput.value.trim();
-                document.getElementById('profile-name-display').innerText = updatedName;
+                document.getElementById('profile-name-display').innerText = nameInput.value.trim();
             }
             switchPage('home');
         }
@@ -835,11 +837,10 @@
                 grid.innerHTML += `
                     <div class="product-card">
                         <button class="wishlist-btn" onclick="toggleWishlist(${p.id})">${isWish ? '❤️' : '🤍'}</button>
-                        <div class="product-thumb" onclick="openChat('${p.title}')">${p.thumb}</div>
+                        <div class="product-thumb" onclick="openDetail(${p.id})">${p.thumb}</div>
                         <div class="product-info">
-                            <div class="product-title" onclick="openChat('${p.title}')">${p.title}</div>
+                            <div class="product-title" onclick="openDetail(${p.id})">${p.title}</div>
                             <div class="product-price">NT$ ${p.price}</div>
-                            <button onclick="openChat('${p.title}')" style="width:100%; margin-top:10px; background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.3); color:#fed7aac9; padding:6px; border-radius:6px; cursor:pointer; font-size:12px;">💬 聊聊問細節</button>
                         </div>
                     </div>
                 `;
@@ -882,9 +883,9 @@
                 grid.innerHTML += `
                     <div class="product-card">
                         <button class="wishlist-btn" onclick="toggleWishlist(${p.id})">❤️</button>
-                        <div class="product-thumb" onclick="openChat('${p.title}')">${p.thumb}</div>
+                        <div class="product-thumb" onclick="openDetail(${p.id})">${p.thumb}</div>
                         <div class="product-info">
-                            <div class="product-title" onclick="openChat('${p.title}')">${p.title}</div>
+                            <div class="product-title" onclick="openDetail(${p.id})">${p.title}</div>
                             <div class="product-price">NT$ ${p.price}</div>
                         </div>
                     </div>
@@ -892,43 +893,40 @@
             });
         }
 
-        function fakeAIAnalyze() {
-            document.getElementById('up-title').value = "全新特製手作木質香氛燈";
-            document.getElementById('up-category').value = "anime";
-            document.getElementById('up-price').value = "850";
-            document.getElementById('up-desc').value = "【AI自動生成】質感溫潤，附贈精油，送禮自用兩相宜。";
-            alert("✨ AI 照片辨識成功！欄位已自動填入。");
+        /* 商品詳情彈窗控制 */
+        function openDetail(id) {
+            currentActiveProduct = products.find(p => p.id === id) || myProducts.find(p => p.id === id);
+            if (!currentActiveProduct) return;
+
+            document.getElementById('det-title').innerText = currentActiveProduct.title;
+            document.getElementById('det-thumb').innerText = currentActiveProduct.thumb;
+            document.getElementById('det-price').innerText = `NT$ ${currentActiveProduct.price}`;
+            document.getElementById('det-desc').innerText = currentActiveProduct.desc;
+            document.getElementById('detail-modal').style.display = 'flex';
+        }
+        function closeDetail() {
+            document.getElementById('detail-modal').style.display = 'none';
         }
 
-        function submitNewProduct() {
-            const title = document.getElementById('up-title').value || "未命名商品";
-            const price = document.getElementById('up-price').value || "100";
-            const category = document.getElementById('up-category').value;
-            const desc = document.getElementById('up-desc').value;
-
-            const newObj = { id: Date.now(), title, price: Number(price), category, desc, thumb: "📦 新上架" };
-            products.unshift(newObj);
-            myProducts.unshift(newObj);
-            alert("🎉 商品已成功透過 AI 上架至拾光市集！");
-            switchPage('home');
+        function openChatFromDetail() {
+            closeDetail();
+            openChat(currentActiveProduct.title);
         }
 
-        function renderMyProducts() {
-            const grid = document.getElementById('my-products-grid');
-            grid.innerHTML = '';
-            myProducts.forEach(p => {
-                grid.innerHTML += `
-                    <div class="product-card">
-                        <div class="product-thumb">${p.thumb}</div>
-                        <div class="product-info">
-                            <div class="product-title">${p.title}</div>
-                            <div class="product-price">NT$ ${p.price} <span style="font-size:11px; color:#10b981; float:right;">(上架中)</span></div>
-                        </div>
-                    </div>
-                `;
-            });
+        function openCheckout() {
+            closeDetail();
+            document.getElementById('checkout-item-name').innerText = `購買商品：${currentActiveProduct.title} (NT$ ${currentActiveProduct.price})`;
+            document.getElementById('checkout-modal').style.display = 'flex';
+        }
+        function closeCheckout() {
+            document.getElementById('checkout-modal').style.display = 'none';
+        }
+        function finishCheckout() {
+            alert("🎉 訂單已成立！賣家將盡快為您安排出貨或面交。");
+            closeCheckout();
         }
 
+        /* 聊聊功能 */
         function openChat(title) {
             document.getElementById('chat-item-title').innerText = `💬 洽詢：${title}`;
             document.getElementById('chat-modal').style.display = 'flex';
@@ -950,6 +948,43 @@
                 chatBox.innerHTML += `<div class="chat-msg seller">賣家已收到您的訊息，會盡快回覆您喔！</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 800);
+        }
+
+        function fakeAIAnalyze() {
+            document.getElementById('up-title').value = "全新特製手作木質香氛燈";
+            document.getElementById('up-category').value = "anime";
+            document.getElementById('up-price').value = "850";
+            document.getElementById('up-desc').value = "【AI自動生成】質感溫潤，附贈精油，送禮自用兩相宜。";
+            alert("✨ AI 照片辨識成功！欄位已自動填入。");
+        }
+
+        function submitNewProduct() {
+            const title = document.getElementById('up-title').value || "未命名商品";
+            const price = document.getElementById('up-price').value || "100";
+            const category = document.getElementById('up-category').value;
+            const desc = document.getElementById('up-desc').value || "無特別說明。";
+
+            const newObj = { id: Date.now(), title, price: Number(price), category, desc, thumb: "📦 新上架" };
+            products.unshift(newObj);
+            myProducts.unshift(newObj);
+            alert("🎉 商品已成功透過 AI 上架至拾光市集！");
+            switchPage('home');
+        }
+
+        function renderMyProducts() {
+            const grid = document.getElementById('my-products-grid');
+            grid.innerHTML = '';
+            myProducts.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <div class="product-thumb" onclick="openDetail(${p.id})">${p.thumb}</div>
+                        <div class="product-info">
+                            <div class="product-title" onclick="openDetail(${p.id})">${p.title}</div>
+                            <div class="product-price">NT$ ${p.price} <span style="font-size:11px; color:#10b981; float:right;">(上架中)</span></div>
+                        </div>
+                    </div>
+                `;
+            });
         }
     </script>
 </body>
