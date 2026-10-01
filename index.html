@@ -455,13 +455,84 @@
         .modal-card {
             background: #1b1614;
             border: 1px solid rgba(249, 115, 22, 0.3);
-            width: 520px;
+            width: 560px;
             max-width: 92%;
             border-radius: 16px;
             padding: 25px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.8);
             max-height: 90vh;
             overflow-y: auto;
+        }
+
+        /* 賣家資訊卡小元件 */
+        .seller-card-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(20, 17, 15, 0.9);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .seller-info-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .seller-avatar {
+            width: 40px; height: 40px;
+            background: #f97316;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: #fff; font-weight: bold;
+        }
+        .seller-name {
+            color: #ffedd5; font-size: 14px; font-weight: 500;
+        }
+        .seller-name:hover { color: #f97316; text-decoration: underline; }
+        .seller-rating {
+            color: #94a3b8; font-size: 12px; margin-top: 2px;
+        }
+        .view-seller-btn {
+            background: rgba(249, 115, 22, 0.15);
+            border: 1px solid rgba(249, 115, 22, 0.4);
+            color: #fed7aa;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .view-seller-btn:hover { background: #f97316; color: #fff; }
+
+        /* 商品規格表格區 */
+        .specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .spec-item {
+            color: #cbd5e1;
+        }
+        .spec-item span {
+            color: #94a3b8;
+        }
+
+        /* 寄送資訊區 */
+        .shipping-box {
+            background: rgba(20, 17, 15, 0.6);
+            border-left: 3px solid #f97316;
+            padding: 10px 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 15px;
         }
 
         /* 聊聊互動窗 */
@@ -652,7 +723,7 @@
     <!-- 2. 我的收藏夾 -->
     <div id="page-wishlist" class="page-container">
         <div class="main-content-wrapper">
-            <h2 class="section-title">❤️ 我的收藏清單</h2>
+            <h2 class="section-title">❤️️ 我的收藏清單</h2>
             <div class="product-grid" id="wishlist-grid"></div>
         </div>
     </div>
@@ -678,6 +749,19 @@
                 </div>
                 <div class="form-group"><label>售價 (NT$)</label><input type="text" id="up-price" placeholder="AI 智慧估價..."></div>
             </div>
+            <div class="form-group-row">
+                <div class="form-group">
+                    <label>新舊程度</label>
+                    <select id="up-condition">
+                        <option value="幾乎全新 (僅拆封)">幾乎全新 (僅拆封)</option>
+                        <option value="九成新 (極少使用)">九成新 (極少使用)</option>
+                        <option value="八成新 (正常使用痕跡)">八成新 (正常使用痕跡)</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>品牌 / 型號</label><input type="text" id="up-brand" placeholder="例如: Logitech / Sony"></div>
+            </div>
+            <div class="form-group"><label>規格 / 尺寸</label><input type="text" id="up-specs" placeholder="例如: 茶軸 / M號 / 黑色"></div>
+            <div class="form-group"><label>寄送與交貨方式</label><input type="text" id="up-shipping" value="7-11店到店 (運費60元) / 雙北捷運站面交"></div>
             <div class="form-group"><label>商品描述</label><textarea id="up-desc" placeholder="AI 產生介紹..."></textarea></div>
             <button class="action-btn" onclick="submitNewProduct()">確認刊登商品</button>
         </div>
@@ -706,13 +790,52 @@
                 <h3 id="det-title" style="color: #ffedd5; font-size: 18px;">商品詳情</h3>
                 <button onclick="closeDetail()" style="background:none; border:none; color:#aaa; cursor:pointer; font-size:18px;">✕</button>
             </div>
-            <div id="det-thumb" style="width:100%; height:180px; background:#241d1a; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:15px;">📦</div>
-            <div id="det-price" style="color:#f97316; font-size:20px; font-weight:bold; margin-bottom:10px;">NT$ 0</div>
-            <p id="det-desc" style="color:#cbd5e1; font-size:14px; line-height:1.6; margin-bottom:20px; background:rgba(0,0,0,0.2); padding:12px; border-radius:8px;"></p>
+
+            <!-- 1. 賣家帳號連結區 -->
+            <div class="seller-card-box">
+                <div class="seller-info-left" onclick="viewSellerProfile()">
+                    <div id="det-seller-avatar" class="seller-avatar">W</div>
+                    <div>
+                        <div id="det-seller-name" class="seller-name">賣家名稱</div>
+                        <div id="det-seller-rating" class="seller-rating">⭐ 4.9分 · 歷史評價 (28)</div>
+                    </div>
+                </div>
+                <button class="view-seller-btn" onclick="viewSellerProfile()">查看賣家</button>
+            </div>
+
+            <div id="det-thumb" style="width:100%; height:160px; background:#241d1a; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:12px;">📦</div>
+            <div id="det-price" style="color:#f97316; font-size:22px; font-weight:bold; margin-bottom:12px;">NT$ 0</div>
+
+            <!-- 2. 新舊程度、分類、品牌、規格等 -->
+            <div class="specs-grid">
+                <div class="spec-item"><span>新舊程度：</span><strong id="det-condition">-</strong></div>
+                <div class="spec-item"><span>商品分類：</span><strong id="det-category-name">-</strong></div>
+                <div class="spec-item"><span>品牌型號：</span><strong id="det-brand">-</strong></div>
+                <div class="spec-item"><span>規格尺寸：</span><strong id="det-specs">-</strong></div>
+            </div>
+
+            <!-- 3. 寄送資訊 -->
+            <div class="shipping-box" id="det-shipping">
+                📦 寄送方式：7-11店到店 / 雙北捷運面交
+            </div>
+
+            <p id="det-desc" style="color:#cbd5e1; font-size:13px; line-height:1.6; margin-bottom:20px; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px;"></p>
+            
             <div style="display:flex; gap:10px;">
                 <button onclick="openChatFromDetail()" style="flex:1; background:rgba(249,115,22,0.15); border:1px solid #f97316; color:#fed7aa; padding:11px; border-radius:8px; cursor:pointer; font-weight:bold;">💬 聊聊問細節</button>
                 <button onclick="openCheckout()" style="flex:1; background:#f97316; border:none; color:white; padding:11px; border-radius:8px; cursor:pointer; font-weight:bold;">⚡ 直接購買</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 賣家資訊簡介彈窗 -->
+    <div id="seller-modal" class="modal-overlay">
+        <div class="modal-card" style="text-align: center; padding: 30px;">
+            <div id="sel-modal-avatar" style="width: 70px; height: 70px; background: #f97316; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; margin: 0 auto 15px auto; font-weight: bold;">W</div>
+            <h3 id="sel-modal-name" style="color: #ffedd5; font-size: 20px; margin-bottom: 5px;">賣家名稱</h3>
+            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">⭐ 4.9分 (28則好評) · 聊聊回覆率 98%</p>
+            <p style="color: #cbd5e1; font-size: 13px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-bottom: 20px;">「熱愛分享好物給有緣人，商品皆為正品，可安心下單！」</p>
+            <button onclick="closeSellerModal()" class="action-btn">關閉視窗</button>
         </div>
     </div>
 
@@ -740,7 +863,7 @@
             <h3 style="color: #ffedd5; font-size: 20px; margin-bottom: 10px;">確認結帳</h3>
             <p id="checkout-item-name" style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;"></p>
             <div style="background: rgba(20,17,15,0.8); padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px; font-size: 13px; color: #cbd5e1;">
-                <p>📍 取貨方式：7-11 店到店 / 雙北捷運面交</p>
+                <p id="checkout-shipping-info">📍 取貨方式：7-11 店到店 / 雙北捷運面交</p>
                 <p style="margin-top: 5px;">💳 付款方式：線上信用卡 / 取貨付款</p>
             </div>
             <button class="action-btn" onclick="finishCheckout()">確認送出訂單</button>
@@ -750,14 +873,39 @@
 
     <script>
         let products = [
-            { id: 1, title: "九成新機械鍵盤 (茶軸)", price: 1200, category: "3c", desc: "極少使用，敲擊感佳， RGB 背光正常，原廠盒裝齊全。", thumb: "⌨️ 鍵盤" },
-            { id: 2, title: "Sony 無線降噪耳機", price: 3500, category: "3c", desc: "降噪效果極佳，耳罩無破損，配件與充電線齊全。", thumb: "🎧 耳機" },
-            { id: 3, title: "經典動漫限量收藏公仔", price: 680, category: "anime", desc: "日版金證，盒裝完整，僅拆擺於防塵櫃中。", thumb: "🤖 公仔" },
-            { id: 4, title: "文青風棉麻寬褲 (M號)", price: 350, category: "clothing", desc: "日系質感棉麻材質，版型好看，穿過兩次已洗淨。", thumb: "👖 服飾" }
+            { 
+                id: 1, title: "九成新機械鍵盤 (茶軸)", price: 1200, category: "3c", categoryName: "3C 科技", 
+                condition: "九成新 (極少使用)", brand: "Logitech 羅技", specs: "茶軸 / RGB背光 / 有線", 
+                shipping: "7-11店到店 (60元) / 雙北捷運站面交", seller: "Jason 嚴選", sellerRating: "⭐ 4.9 (42則)", 
+                desc: "極少使用，敲擊感佳，RGB 背光正常，原廠盒裝齊全。", thumb: "⌨️ 鍵盤" 
+            },
+            { 
+                id: 2, title: "Sony 無線降噪耳機", price: 3500, category: "3c", categoryName: "3C 科技", 
+                condition: "幾乎全新 (僅拆封)", brand: "Sony 索尼", specs: "WH-1000XM4 / 黑色", 
+                shipping: "全家店到店 (60元) / 台北市面交", seller: "艾莉的選物", sellerRating: "⭐ 5.0 (19則)", 
+                desc: "降噪效果極佳，耳罩無破損，配件與充電線齊全。", thumb: "🎧 耳機" 
+            },
+            { 
+                id: 3, title: "經典動漫限量收藏公仔", price: 680, category: "anime", categoryName: "動漫周邊", 
+                condition: "九成新 (極少使用)", brand: "Banpresto", specs: "日版金證 / 高約 18cm", 
+                shipping: "郵局掛號 (80元) / 7-11店到店", seller: "動漫收藏小舖", sellerRating: "⭐ 4.8 (110則)", 
+                desc: "日版金證，盒裝完整，僅拆擺於防塵櫃中。", thumb: "🤖 公仔" 
+            },
+            { 
+                id: 4, title: "文青風棉麻寬褲 (M號)", price: 350, category: "clothing", categoryName: "流行服飾", 
+                condition: "八成新 (正常使用痕跡)", brand: "日系品牌", specs: "M號 / 褲長 98cm / 卡其色", 
+                shipping: "7-11/全家店到店 (60元)", seller: "Walker", sellerRating: "⭐ 5.0 (12則)", 
+                desc: "日系質感棉麻材質，版型好看，穿過兩次已洗淨。", thumb: "👖 服飾" 
+            }
         ];
         let wishlist = [];
         let myProducts = [
-            { id: 101, title: "精選個人二手原文書", price: 450, category: "book", desc: "無畫線註記，九成新。", thumb: "📚 書籍" }
+            { 
+                id: 101, title: "精選個人二手原文書", price: 450, category: "book", categoryName: "書籍雜誌", 
+                condition: "九成新 (極少使用)", brand: "Pearson", specs: "大學原文書 / 英文版", 
+                shipping: "7-11店到店 (60元)", seller: "Walker", sellerRating: "⭐ 5.0 (12則)", 
+                desc: "無畫線註記，九成新。", thumb: "📚 書籍" 
+            }
         ];
         let currentFilterCategory = 'all';
         let currentActiveProduct = null;
@@ -858,7 +1006,7 @@
         }
 
         function toggleWishlist(id) {
-            const item = products.find(p => p.id === id);
+            const item = products.find(p => p.id === id) || myProducts.find(p => p.id === id);
             const index = wishlist.findIndex(w => w.id === id);
             if (index > -1) {
                 wishlist.splice(index, 1);
@@ -902,10 +1050,35 @@
             document.getElementById('det-thumb').innerText = currentActiveProduct.thumb;
             document.getElementById('det-price').innerText = `NT$ ${currentActiveProduct.price}`;
             document.getElementById('det-desc').innerText = currentActiveProduct.desc;
+            
+            // 賣家資訊
+            document.getElementById('det-seller-name').innerText = currentActiveProduct.seller || "Walker";
+            document.getElementById('det-seller-rating').innerText = currentActiveProduct.sellerRating || "⭐ 5.0 (12則)";
+            document.getElementById('det-seller-avatar').innerText = (currentActiveProduct.seller || "W").charAt(0);
+
+            // 詳細規格
+            document.getElementById('det-condition').innerText = currentActiveProduct.condition || "九成新";
+            document.getElementById('det-category-name').innerText = currentActiveProduct.categoryName || "一般分類";
+            document.getElementById('det-brand').innerText = currentActiveProduct.brand || "未填寫";
+            document.getElementById('det-specs').innerText = currentActiveProduct.specs || "標準規格";
+
+            // 寄送資訊
+            document.getElementById('det-shipping').innerText = `📦 寄送方式：${currentActiveProduct.shipping || "7-11店到店 / 面交"}`;
+
             document.getElementById('detail-modal').style.display = 'flex';
         }
         function closeDetail() {
             document.getElementById('detail-modal').style.display = 'none';
+        }
+
+        function viewSellerProfile() {
+            const sellerName = currentActiveProduct ? (currentActiveProduct.seller || "Walker") : "Walker";
+            document.getElementById('sel-modal-name').innerText = sellerName;
+            document.getElementById('sel-modal-avatar').innerText = sellerName.charAt(0);
+            document.getElementById('seller-modal').style.display = 'flex';
+        }
+        function closeSellerModal() {
+            document.getElementById('seller-modal').style.display = 'none';
         }
 
         function openChatFromDetail() {
@@ -916,6 +1089,7 @@
         function openCheckout() {
             closeDetail();
             document.getElementById('checkout-item-name').innerText = `購買商品：${currentActiveProduct.title} (NT$ ${currentActiveProduct.price})`;
+            document.getElementById('checkout-shipping-info').innerText = `📍 取貨方式：${currentActiveProduct.shipping || "7-11店到店"}`;
             document.getElementById('checkout-modal').style.display = 'flex';
         }
         function closeCheckout() {
@@ -954,17 +1128,31 @@
             document.getElementById('up-title').value = "全新特製手作木質香氛燈";
             document.getElementById('up-category').value = "anime";
             document.getElementById('up-price').value = "850";
+            document.getElementById('up-condition').value = "幾乎全新 (僅拆封)";
+            document.getElementById('up-brand').value = "手作選物";
+            document.getElementById('up-specs').value = "高 15cm / 附原木底座";
+            document.getElementById('up-shipping').value = "7-11店到店 (60元) / 郵寄";
             document.getElementById('up-desc').value = "【AI自動生成】質感溫潤，附贈精油，送禮自用兩相宜。";
-            alert("✨ AI 照片辨識成功！欄位已自動填入。");
+            alert("✨ AI 照片辨識成功！所有詳細規格欄位已自動填入。");
         }
 
         function submitNewProduct() {
             const title = document.getElementById('up-title').value || "未命名商品";
             const price = document.getElementById('up-price').value || "100";
             const category = document.getElementById('up-category').value;
+            const categoryName = document.getElementById('up-category').options[document.getElementById('up-category').selectedIndex].text;
+            const condition = document.getElementById('up-condition').value;
+            const brand = document.getElementById('up-brand').value || "通用品牌";
+            const specs = document.getElementById('up-specs').value || "標準規格";
+            const shipping = document.getElementById('up-shipping').value || "7-11店到店";
             const desc = document.getElementById('up-desc').value || "無特別說明。";
+            const sellerName = document.getElementById('profile-name-display').innerText;
 
-            const newObj = { id: Date.now(), title, price: Number(price), category, desc, thumb: "📦 新上架" };
+            const newObj = { 
+                id: Date.now(), title, price: Number(price), category, categoryName, 
+                condition, brand, specs, shipping, seller: sellerName, sellerRating: "⭐ 5.0 (12則)", 
+                desc, thumb: "📦 新上架" 
+            };
             products.unshift(newObj);
             myProducts.unshift(newObj);
             alert("🎉 商品已成功透過 AI 上架至拾光市集！");
