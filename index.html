@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            -webkit-tap-highlight-color: transparent;
         }
         body {
             background: radial-gradient(circle at 20% 20%, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
@@ -28,12 +29,13 @@
         /* 頂部導覽列 */
         .navbar {
             width: 100%;
-            padding: 16px 40px;
+            padding: 16px 30px;
             display: none;
             justify-content: space-between;
             align-items: center;
-            background: rgba(20, 17, 15, 0.85);
+            background: rgba(20, 17, 15, 0.9);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(249, 115, 22, 0.12);
             position: fixed;
             top: 0;
@@ -49,35 +51,35 @@
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             font-weight: 600;
             color: #ffedd5;
-            font-size: 19px;
+            font-size: 18px;
             font-family: "Georgia", serif;
             letter-spacing: 0.5px;
             cursor: pointer;
         }
         .logo-icon {
             background: linear-gradient(135deg, #f97316, #ea580c);
-            padding: 6px 10px;
+            padding: 5px 9px;
             border-radius: 8px;
             color: white;
-            font-size: 14px;
+            font-size: 13px;
             box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
         }
         .nav-btns {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
         .nav-btns button {
             background: transparent;
             border: 1px solid rgba(249, 115, 22, 0.3);
             color: #cbd5e1;
-            padding: 7px 15px;
+            padding: 6px 12px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
         }
         .nav-btns button.active, .nav-btns button:hover {
             background: #f97316;
@@ -149,7 +151,7 @@
         }
         .welcome-title {
             font-family: "Georgia", serif;
-            font-size: 44px;
+            font-size: 42px;
             color: #f8fafc;
             line-height: 1.2;
             margin-bottom: 20px;
@@ -310,20 +312,21 @@
         .main-content-wrapper {
             max-width: 950px;
             margin: 95px auto 40px auto;
-            background: rgba(26, 22, 20, 0.8);
+            background: rgba(26, 22, 20, 0.85);
             backdrop-filter: blur(16px);
-            padding: 35px;
+            -webkit-backdrop-filter: blur(16px);
+            padding: 30px;
             border-radius: 20px;
             border: 1px solid rgba(249, 115, 22, 0.2);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            width: 100%;
+            width: 92%;
         }
         h2.section-title {
             font-family: "Georgia", serif;
             color: #ffedd5;
             margin-bottom: 20px;
             font-weight: 500;
-            font-size: 26px;
+            font-size: 24px;
         }
 
         /* 搜尋與過濾列 */
@@ -346,6 +349,7 @@
             border-radius: 10px;
             color: #fff;
             font-size: 14px;
+            outline: none;
         }
         .search-input-box span {
             position: absolute;
@@ -358,6 +362,9 @@
             gap: 8px;
             overflow-x: auto;
             padding-bottom: 5px;
+        }
+        .category-chips::-webkit-scrollbar {
+            display: none;
         }
         .chip {
             background: rgba(20, 17, 15, 0.8);
@@ -379,18 +386,18 @@
         /* 商品九宮格與卡片 */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
         }
         .product-card {
-            background: rgba(20, 16, 14, 0.75);
+            background: rgba(20, 16, 14, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 12px;
             overflow: hidden;
             position: relative;
         }
         .product-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             border-color: rgba(249, 115, 22, 0.4);
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
@@ -402,15 +409,15 @@
             align-items: center;
             justify-content: center;
             color: #cbd5e1;
-            font-size: 16px;
+            font-size: 32px;
             cursor: pointer;
-            font-weight: 500;
         }
         .wishlist-btn {
             position: absolute;
             top: 10px;
             right: 10px;
             background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
             border: none;
             width: 32px;
             height: 32px;
@@ -419,7 +426,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             z-index: 5;
         }
         .product-info {
@@ -431,6 +438,9 @@
             color: #f1f5f9;
             cursor: pointer;
             font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .product-title:hover {
             color: #f97316;
@@ -447,18 +457,20 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 200;
+            padding: 16px;
         }
         .modal-card {
             background: #1b1614;
             border: 1px solid rgba(249, 115, 22, 0.3);
-            width: 560px;
-            max-width: 92%;
+            width: 520px;
+            max-width: 100%;
             border-radius: 16px;
-            padding: 25px;
+            padding: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.8);
             max-height: 90vh;
             overflow-y: auto;
@@ -482,11 +494,11 @@
             cursor: pointer;
         }
         .seller-avatar {
-            width: 40px; height: 40px;
+            width: 38px; height: 38px;
             background: #f97316;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 16px; color: #fff; font-weight: bold;
+            font-size: 15px; color: #fff; font-weight: bold;
         }
         .seller-name {
             color: #ffedd5; font-size: 14px; font-weight: 500;
@@ -553,6 +565,7 @@
             padding: 8px 12px;
             border-radius: 8px;
             max-width: 80%;
+            line-height: 1.4;
         }
         .chat-msg.buyer {
             background: rgba(249, 115, 22, 0.2);
@@ -592,6 +605,7 @@
             border-radius: 8px;
             color: #fff;
             font-size: 14px;
+            outline: none;
         }
         .form-group textarea {
             height: 90px;
@@ -640,13 +654,13 @@
         </div>
         <div class="nav-btns">
             <button id="btn-home" class="active" onclick="switchPage('home')">瀏覽好物</button>
-            <button id="btn-wishlist" onclick="switchPage('wishlist')">❤️ 收藏夾 (<span id="wish-count">0</span>)</button>
+            <button id="btn-wishlist" onclick="switchPage('wishlist')">❤️ 收藏 (<span id="wish-count">0</span>)</button>
             <button id="btn-upload" onclick="switchPage('upload')">✨ AI 上架</button>
-            <button id="btn-profile" onclick="switchPage('profile')">👤 個人中心</button>
+            <button id="btn-profile" onclick="switchPage('profile')">👤 個人</button>
         </div>
     </div>
 
-    <!-- 0. 歡迎首頁與半透明玻璃登入介面 -->
+    <!-- 0. 歡迎首頁與登入介面 -->
     <div id="page-welcome-auth" class="page-container active">
         <div class="split-left" onclick="openAuthPanel(event)">
             <div class="welcome-content">
@@ -723,7 +737,7 @@
     <!-- 2. 我的收藏夾 -->
     <div id="page-wishlist" class="page-container">
         <div class="main-content-wrapper">
-            <h2 class="section-title">❤️️ 我的收藏清單</h2>
+            <h2 class="section-title">❤️ 我的收藏清單</h2>
             <div class="product-grid" id="wishlist-grid"></div>
         </div>
     </div>
@@ -803,7 +817,7 @@
                 <button class="view-seller-btn" onclick="viewSellerProfile()">查看賣家</button>
             </div>
 
-            <div id="det-thumb" style="width:100%; height:160px; background:#241d1a; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:12px;">📦</div>
+            <div id="det-thumb" style="width:100%; height:160px; background:#241d1a; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:36px; margin-bottom:12px;">📦</div>
             <div id="det-price" style="color:#f97316; font-size:22px; font-weight:bold; margin-bottom:12px;">NT$ 0</div>
 
             <!-- 2. 新舊程度、分類、品牌、規格等 -->
@@ -877,25 +891,25 @@
                 id: 1, title: "九成新機械鍵盤 (茶軸)", price: 1200, category: "3c", categoryName: "3C 科技", 
                 condition: "九成新 (極少使用)", brand: "Logitech 羅技", specs: "茶軸 / RGB背光 / 有線", 
                 shipping: "7-11店到店 (60元) / 雙北捷運站面交", seller: "Jason 嚴選", sellerRating: "⭐ 4.9 (42則)", 
-                desc: "極少使用，敲擊感佳，RGB 背光正常，原廠盒裝齊全。", thumb: "⌨️ 鍵盤" 
+                desc: "極少使用，敲擊感佳，RGB 背光正常，原廠盒裝齊全。", thumb: "⌨️" 
             },
             { 
                 id: 2, title: "Sony 無線降噪耳機", price: 3500, category: "3c", categoryName: "3C 科技", 
                 condition: "幾乎全新 (僅拆封)", brand: "Sony 索尼", specs: "WH-1000XM4 / 黑色", 
                 shipping: "全家店到店 (60元) / 台北市面交", seller: "艾莉的選物", sellerRating: "⭐ 5.0 (19則)", 
-                desc: "降噪效果極佳，耳罩無破損，配件與充電線齊全。", thumb: "🎧 耳機" 
+                desc: "降噪效果極佳，耳罩無破損，配件與充電線齊全。", thumb: "🎧" 
             },
             { 
                 id: 3, title: "經典動漫限量收藏公仔", price: 680, category: "anime", categoryName: "動漫周邊", 
                 condition: "九成新 (極少使用)", brand: "Banpresto", specs: "日版金證 / 高約 18cm", 
                 shipping: "郵局掛號 (80元) / 7-11店到店", seller: "動漫收藏小舖", sellerRating: "⭐ 4.8 (110則)", 
-                desc: "日版金證，盒裝完整，僅拆擺於防塵櫃中。", thumb: "🤖 公仔" 
+                desc: "日版金證，盒裝完整，僅拆擺於防塵櫃中。", thumb: "🤖" 
             },
             { 
                 id: 4, title: "文青風棉麻寬褲 (M號)", price: 350, category: "clothing", categoryName: "流行服飾", 
                 condition: "八成新 (正常使用痕跡)", brand: "日系品牌", specs: "M號 / 褲長 98cm / 卡其色", 
                 shipping: "7-11/全家店到店 (60元)", seller: "Walker", sellerRating: "⭐ 5.0 (12則)", 
-                desc: "日系質感棉麻材質，版型好看，穿過兩次已洗淨。", thumb: "👖 服飾" 
+                desc: "日系質感棉麻材質，版型好看，穿過兩次已洗淨。", thumb: "👖" 
             }
         ];
         let wishlist = [];
@@ -904,7 +918,7 @@
                 id: 101, title: "精選個人二手原文書", price: 450, category: "book", categoryName: "書籍雜誌", 
                 condition: "九成新 (極少使用)", brand: "Pearson", specs: "大學原文書 / 英文版", 
                 shipping: "7-11店到店 (60元)", seller: "Walker", sellerRating: "⭐ 5.0 (12則)", 
-                desc: "無畫線註記，九成新。", thumb: "📚 書籍" 
+                desc: "無畫線註記，九成新。", thumb: "📚" 
             }
         ];
         let currentFilterCategory = 'all';
@@ -984,11 +998,11 @@
                 const isWish = wishlist.some(w => w.id === p.id);
                 grid.innerHTML += `
                     <div class="product-card">
-                        <button class="wishlist-btn" onclick="toggleWishlist(${p.id})">${isWish ? '❤️' : '🤍'}</button>
+                        <button class="wishlist-btn" onclick="toggleWishlist(${p.id})">${isWish ? '❤️️' : '🤍'}</button>
                         <div class="product-thumb" onclick="openDetail(${p.id})">${p.thumb}</div>
                         <div class="product-info">
                             <div class="product-title" onclick="openDetail(${p.id})">${p.title}</div>
-                            <div class="product-price">NT$ ${p.price}</div>
+                            <div class="product-price">NT$ ${p.price.toLocaleString()}</div>
                         </div>
                     </div>
                 `;
@@ -1034,35 +1048,30 @@
                         <div class="product-thumb" onclick="openDetail(${p.id})">${p.thumb}</div>
                         <div class="product-info">
                             <div class="product-title" onclick="openDetail(${p.id})">${p.title}</div>
-                            <div class="product-price">NT$ ${p.price}</div>
+                            <div class="product-price">NT$ ${p.price.toLocaleString()}</div>
                         </div>
                     </div>
                 `;
             });
         }
 
-        /* 商品詳情彈窗控制 */
         function openDetail(id) {
             currentActiveProduct = products.find(p => p.id === id) || myProducts.find(p => p.id === id);
             if (!currentActiveProduct) return;
 
             document.getElementById('det-title').innerText = currentActiveProduct.title;
             document.getElementById('det-thumb').innerText = currentActiveProduct.thumb;
-            document.getElementById('det-price').innerText = `NT$ ${currentActiveProduct.price}`;
+            document.getElementById('det-price').innerText = `NT$ ${currentActiveProduct.price.toLocaleString()}`;
             document.getElementById('det-desc').innerText = currentActiveProduct.desc;
             
-            // 賣家資訊
             document.getElementById('det-seller-name').innerText = currentActiveProduct.seller || "Walker";
             document.getElementById('det-seller-rating').innerText = currentActiveProduct.sellerRating || "⭐ 5.0 (12則)";
             document.getElementById('det-seller-avatar').innerText = (currentActiveProduct.seller || "W").charAt(0);
 
-            // 詳細規格
             document.getElementById('det-condition').innerText = currentActiveProduct.condition || "九成新";
             document.getElementById('det-category-name').innerText = currentActiveProduct.categoryName || "一般分類";
             document.getElementById('det-brand').innerText = currentActiveProduct.brand || "未填寫";
             document.getElementById('det-specs').innerText = currentActiveProduct.specs || "標準規格";
-
-            // 寄送資訊
             document.getElementById('det-shipping').innerText = `📦 寄送方式：${currentActiveProduct.shipping || "7-11店到店 / 面交"}`;
 
             document.getElementById('detail-modal').style.display = 'flex';
@@ -1088,7 +1097,7 @@
 
         function openCheckout() {
             closeDetail();
-            document.getElementById('checkout-item-name').innerText = `購買商品：${currentActiveProduct.title} (NT$ ${currentActiveProduct.price})`;
+            document.getElementById('checkout-item-name').innerText = `購買商品：${currentActiveProduct.title} (NT$ ${currentActiveProduct.price.toLocaleString()})`;
             document.getElementById('checkout-shipping-info').innerText = `📍 取貨方式：${currentActiveProduct.shipping || "7-11店到店"}`;
             document.getElementById('checkout-modal').style.display = 'flex';
         }
@@ -1097,10 +1106,16 @@
         }
         function finishCheckout() {
             alert("🎉 訂單已成立！賣家將盡快為您安排出貨或面交。");
+            // 結帳成功後自動將商品從列表移除（模擬已售出）
+            if (currentActiveProduct) {
+                products = products.filter(p => p.id !== currentActiveProduct.id);
+                wishlist = wishlist.filter(w => w.id !== currentActiveProduct.id);
+                document.getElementById('wish-count').innerText = wishlist.length;
+                renderProducts();
+            }
             closeCheckout();
         }
 
-        /* 聊聊功能 */
         function openChat(title) {
             document.getElementById('chat-item-title').innerText = `💬 洽詢：${title}`;
             document.getElementById('chat-modal').style.display = 'flex';
@@ -1151,7 +1166,7 @@
             const newObj = { 
                 id: Date.now(), title, price: Number(price), category, categoryName, 
                 condition, brand, specs, shipping, seller: sellerName, sellerRating: "⭐ 5.0 (12則)", 
-                desc, thumb: "📦 新上架" 
+                desc, thumb: "✨" 
             };
             products.unshift(newObj);
             myProducts.unshift(newObj);
@@ -1168,7 +1183,7 @@
                         <div class="product-thumb" onclick="openDetail(${p.id})">${p.thumb}</div>
                         <div class="product-info">
                             <div class="product-title" onclick="openDetail(${p.id})">${p.title}</div>
-                            <div class="product-price">NT$ ${p.price} <span style="font-size:11px; color:#10b981; float:right;">(上架中)</span></div>
+                            <div class="product-price">NT$ ${p.price.toLocaleString()} <span style="font-size:11px; color:#10b981; float:right;">(上架中)</span></div>
                         </div>
                     </div>
                 `;
